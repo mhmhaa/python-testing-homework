@@ -2,6 +2,21 @@ name: Run tests
 on:
   - push
 jobs:
+  check_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_tests: ${{ steps.filter.outputs.src_or_tests }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: dorny/paths-filter@v3.0.2
+        id: filter
+        with:
+          filters: |
+            src_or_tests:
+              - '**/main.py'
+              - '**/test_main_unit.py'
+              - '**/test_main_pytest.py'
+              
   unittest:
     runs-on: ubuntu-latest
     steps:
