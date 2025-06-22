@@ -1,0 +1,44 @@
+name: Run tests
+on:
+  - push
+jobs:
+  check_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      run_tests: ${{ steps.filter.outputs.src_or_tests }}
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: dorny/paths-filter@v3.0.2
+        id: filter
+        with:
+          filters: |
+            src_or_tests:
+              - '**/main.py'
+              - '**/test_main_unit.py'
+              - '**/test_main_pytest.py'
+              
+  unittest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+      - name: Setup Python
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: 3.11.9
+      - name: Run unittest tests
+        run: python -m unittest test_main_unit.py
+  pytest:
+    needs: unittest
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+      - name: Setup Python
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: 3.11.9
+      - name: Install pytest
+        run: pip install pytest
+      - name: Run pytest tests
+        run: pytest test_main_pytest.py
