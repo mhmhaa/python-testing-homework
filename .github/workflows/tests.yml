@@ -18,6 +18,7 @@ jobs:
               - '**/test_main_pytest.py'
               
   unittest:
+    needs: check_changes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -29,7 +30,7 @@ jobs:
       - name: Run unittest tests
         run: python -m unittest test_main_unit.py
   pytest:
-    needs: unittest
+    needs: [check_changes, unittest]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
